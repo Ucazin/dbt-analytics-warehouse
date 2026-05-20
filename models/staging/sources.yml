@@ -1,0 +1,60 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Landing zone for OLTP exports loaded by scripts/seed_sources.py."
+    schema: raw
+    tables:
+      - name: customers
+        description: "One row per customer logo."
+        loaded_at_field: synced_at
+        freshness:
+          warn_after: { count: 24, period: hour }
+          error_after: { count: 48, period: hour }
+        columns:
+          - name: customer_id
+            description: "Unique customer identifier (PK)."
+            tests:
+              - unique
+              - not_null
+          - name: email
+            tests:
+              - not_null
+
+      - name: subscriptions
+        description: "One row per customer × month — a billing snapshot."
+        columns:
+          - name: subscription_id
+            tests: [unique, not_null]
+          - name: customer_id
+            tests:
+              - not_null
+              - relationships:
+                  to:     source('raw','customers')
+                  field:  customer_id
+
+      - name: orders
+        description: "One row per online order. Excludes subscription billing events."
+        columns:
+          - name: order_id
+            tests: [unique, not_null]
+          - name: customer_id
+            tests: [not_null]
+
+      - name: order_items
+        description: "Line items of an order."
+        columns:
+          - name: order_item_id
+            tests: [unique, not_null]
+          - name: order_id
+            tests:
+              - not_null
+              - relationships:
+                  to:    source('raw','orders')
+                  field: order_id
+
+      - name: products
+        description: "Product catalog."
+        columns:
+          - name: product_id
+            tests: [unique, not_null]
