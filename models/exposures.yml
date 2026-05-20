@@ -1,0 +1,33 @@
+version: 2
+
+exposures:
+  - name: executive_dashboard
+    label: "Executive Power BI Dashboard"
+    type: dashboard
+    maturity: medium
+    url: "../05-nyc-311-dashboard/dashboard/DASHBOARD_SPEC.md"
+    description: |
+      Cross-functional executive dashboard consumed by the leadership team.
+      Pulls fct_orders, fct_mrr_movement, and dim_customer.
+    depends_on:
+      - ref('fct_orders')
+      - ref('fct_mrr_movement')
+      - ref('dim_customer')
+    owner:
+      name: Analytics Team
+      email: analytics@example.com
+
+  - name: marketing_funnel_app
+    label: "Marketing Funnel Streamlit App"
+    type: application
+    maturity: low
+    url: "../07-marketing-funnel-streamlit/README.md"
+    description: |
+      Streamlit app that surfaces funnel conversion + channel CAC/ROI for the
+      growth team. Refreshed nightly against the warehouse.
+    depends_on:
+      - ref('fct_orders')
+      - ref('dim_customer')
+    owner:
+      name: Growth Team
+      email: growth@example.com
