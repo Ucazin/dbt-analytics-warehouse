@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "One row per customer logo with lifecycle stage and region."
+    columns:
+      - name: customer_key
+        description: "Surrogate key (hash of customer_id)."
+        tests: [unique, not_null]
+      - name: customer_id
+        description: "Natural key from the source system."
+        tests: [unique, not_null]
+      - name: region
+        tests:
+          - accepted_values:
+              values: ['North America', 'EMEA', 'APAC', 'LATAM']
+      - name: lifecycle_stage
+        tests:
+          - accepted_values:
+              values: ['new', 'engaged', 'mature', 'churned', 'never_active']
+
+  - name: dim_product
+    description: "One row per SKU, with department + return policy joined from seeds."
+    columns:
+      - name: product_key
+        tests: [unique, not_null]
+      - name: product_id
+        tests: [unique, not_null]
+      - name: category_id
+        tests:
+          - relationships:
+              to:    ref('product_categories')
+              field: category_id
+
+  - name: dim_date
+    description: "One row per day. Spans 2 years before to 1 year after the data window."
+    columns:
+      - name: date_key
+        tests: [unique, not_null]
+      - name: calendar_date
+        tests: [unique, not_null]
+
+  - name: fct_orders
+    description: "One row per order. Grain: order_id."
+    columns:
+      - name: order_key
+        tests: [unique, not_null]
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships:
+              to:    ref('dim_customer')
+              field: customer_key
+      - name: gross_revenue_usd
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
