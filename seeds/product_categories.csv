@@ -1,0 +1,9 @@
+category_id,category_name,department,is_returnable
+ELEC,Electronics,Hardware,true
+COMP,Computers,Hardware,true
+ACC,Accessories,Hardware,true
+SOFT,Software License,Digital,false
+SUB,Subscription Add-on,Digital,false
+SVC,Professional Services,Services,false
+TRAIN,Training & Certification,Services,false
+SUPP,Support Plan,Services,false

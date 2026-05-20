@@ -1,0 +1,13 @@
+country_code,country_name,region,is_north_america,is_emea,is_apac
+US,United States,North America,true,false,false
+CA,Canada,North America,true,false,false
+MX,Mexico,North America,true,false,false
+UK,United Kingdom,EMEA,false,true,false
+DE,Germany,EMEA,false,true,false
+FR,France,EMEA,false,true,false
+ES,Spain,EMEA,false,true,false
+AU,Australia,APAC,false,false,true
+NZ,New Zealand,APAC,false,false,true
+JP,Japan,APAC,false,false,true
+SG,Singapore,APAC,false,false,true
+BR,Brazil,LATAM,false,false,false

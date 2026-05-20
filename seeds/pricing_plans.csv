@@ -1,0 +1,5 @@
+plan_id,plan_name,monthly_price_cents,annual_price_cents,tier_rank,is_active
+STARTER,Starter,1500,15000,1,true
+GROWTH,Growth,4000,40000,2,true
+PRO,Pro,8500,85000,3,true
+LEGACY_TEAM,Legacy Team (deprecated),2500,25000,1,false
