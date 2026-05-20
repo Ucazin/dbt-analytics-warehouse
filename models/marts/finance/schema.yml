@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: fct_mrr_movement
+    description: "One row per (customer, month). Classifies each row as new / expansion / contraction / churn / flat."
+    columns:
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships:
+              to:    ref('dim_customer')
+              field: customer_key
+      - name: movement_type
+        tests:
+          - accepted_values:
+              values: ['new', 'expansion', 'contraction', 'churned', 'flat']
+      - name: snapshot_month
+        tests: [not_null]
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [customer_key, snapshot_month]
+
+  - name: fct_subscription_snapshot
+    description: "Customer × month subscription state — every active customer appears once per month they're active."
+    columns:
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships:
+              to:    ref('dim_customer')
+              field: customer_key
+      - name: mrr_usd
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
