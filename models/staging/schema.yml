@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Cleaned customer roster — one row per customer."
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+      - name: country_code
+        tests:
+          - not_null
+          - relationships:
+              to:    ref('country_regions')
+              field: country_code
+      - name: signed_up_at
+        tests:
+          - not_null
+
+  - name: stg_subscriptions
+    description: "Monthly billing snapshots, one row per (customer, month)."
+    columns:
+      - name: subscription_id
+        tests: [unique, not_null]
+      - name: plan_id
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['STARTER', 'GROWTH', 'PRO', 'LEGACY_TEAM']
+      - name: mrr_usd
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+  - name: stg_orders
+    description: "One row per online order."
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to:    ref('stg_customers')
+              field: customer_id
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ['placed', 'paid', 'shipped', 'delivered', 'refunded', 'canceled']
+
+  - name: stg_order_items
+    description: "Line items of an order."
+    columns:
+      - name: order_item_id
+        tests: [unique, not_null]
+
+  - name: stg_products
+    description: "Product catalog, one row per SKU."
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+      - name: category_id
+        tests:
+          - not_null
+          - relationships:
+              to:    ref('product_categories')
+              field: category_id
