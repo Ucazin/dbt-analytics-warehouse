@@ -1,5 +1,30 @@
 # dbt Modern Analytics Warehouse
 
+
+## Architecture
+
+```mermaid
+flowchart LR
+    SEED["scripts/seed_sources.py<br/>(synthetic SaaS + e-com)"] --> RAW[("DuckDB · raw.*")]
+    RAW --> STG["5 staging views<br/>stg_customers · stg_subscriptions<br/>stg_orders · stg_products · stg_dates"]
+    STG --> INT["3 intermediate ephemeral<br/>int_customer_lifecycle<br/>int_mrr_movement<br/>int_order_aggregations"]
+    INT --> CORE["marts/core (3 dims + 1 fact)<br/>dim_customer · dim_product<br/>dim_date · fct_orders"]
+    INT --> FIN["marts/finance (2 facts)<br/>fct_mrr_movement<br/>fct_subscription_snapshot"]
+    RAW --> SNAP["snapshots/snap_customers (SCD-2)"]
+    CORE --> EXP["exposures (downstream)<br/>Power BI dashboard<br/>Streamlit funnel app"]
+    FIN --> EXP
+
+    subgraph TESTS["70 dbt tests"]
+        T1["schema (not_null · unique · accepted_values · relationships)"]
+        T2["singular SQL assertions"]
+        T3["dbt-utils + dbt-expectations"]
+    end
+    STG -.-> TESTS
+    INT -.-> TESTS
+    CORE -.-> TESTS
+    FIN -.-> TESTS
+```
+
 > 🌐 **Live walkthrough:** https://ucazin.github.io/dbt-analytics-warehouse/
 
 A production-shaped [dbt](https://docs.getdbt.com/) project that models a synthetic e-commerce + SaaS dataset into a clean Kimball warehouse — **sources → staging → intermediate → marts** — with tests, documentation, sources, snapshots, exposures, and a Jinja macro for recurring cents-to-dollars conversion.
