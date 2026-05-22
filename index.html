@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>dbt Modern Analytics Warehouse · Lucca Cesar</title>
+<meta name="description" content="A production-shaped dbt project on DuckDB — staging → intermediate → marts, 70 tests, snapshots, exposures, the works. Portable to Snowflake/BigQuery with a profile change." />
+<style>
+  :root { --bg:#faf7ff; --ink:#1e1b29; --muted:#5b5670; --accent:#7c3aed; --accent-soft:#f3edff; --line:#e5deef; }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 24px 96px}
+  .eyebrow{display:inline-block;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:18px}
+  h1{font-family:"Iowan Old Style","Georgia",serif;font-weight:700;font-size:clamp(36px,6vw,56px);line-height:1.08;letter-spacing:-.02em;margin:0 0 24px}
+  h2{font-family:"Iowan Old Style","Georgia",serif;font-weight:700;font-size:clamp(24px,3.4vw,32px);line-height:1.2;margin:56px 0 16px;letter-spacing:-.01em}
+  p{font-size:17px;color:#2a2730;margin:0 0 16px}
+  .lede{font-size:20px;color:var(--muted);margin-bottom:36px}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 0}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:13px;color:#333}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:36px 0 12px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .stat .num{font-family:"Iowan Old Style","Georgia",serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);display:block}
+  .stat .label{font-size:13px;color:var(--muted);margin-top:4px;display:block}
+  .callout{background:var(--accent-soft);border-left:4px solid var(--accent);padding:18px 22px;border-radius:8px;margin:24px 0;font-size:17px}
+  ul.tight{padding-left:1.2em;margin:0 0 16px}
+  ul.tight li{margin-bottom:6px;font-size:17px}
+  a.link{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-weight:600}
+  .cta{background:var(--ink);color:#fff;border-radius:16px;padding:32px 28px;margin-top:48px;display:flex;flex-direction:column;gap:14px}
+  .cta h2{color:#fff;margin:0;font-size:24px}
+  .cta p{color:#cfcfcf;margin:0}
+  .cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .btn{display:inline-block;background:#fff;color:var(--ink);padding:11px 18px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;border:1px solid #fff}
+  .btn.ghost{background:transparent;color:#fff;border-color:#444}
+  .footer{margin-top:64px;color:var(--muted);font-size:13px;text-align:center}
+  @media (max-width: 540px){ .wrap{padding:32px 20px 80px} h1{font-size:34px} .lede{font-size:18px} }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <span class="eyebrow">Project 04 · Analytics Engineering · dbt</span>
+    <h1>A production-shaped dbt project that builds in five seconds.</h1>
+    <p class="lede">Sources, staging, intermediate, marts. Tests, snapshots, exposures, macros. The standard pattern every modern analytics team uses — on a warehouse you can spin up on a laptop.</p>
+
+    <div class="stats">
+      <div class="stat"><span class="num">70 / 70</span><span class="label">tests passing on every build</span></div>
+      <div class="stat"><span class="num">6 marts</span><span class="label">Kimball-style: dims, facts, finance</span></div>
+      <div class="stat"><span class="num">$6.9 M</span><span class="label">cumulative revenue in the synthetic warehouse</span></div>
+      <div class="stat"><span class="num">~5 s</span><span class="label">end-to-end <code>dbt build</code> on DuckDB</span></div>
+    </div>
+
+    <h2>What it signals</h2>
+    <p>dbt is the de-facto transformation layer for analytics in 2026. It appears in nearly every US/CA data-team job posting and in <em>zero</em> of the comparable junior portfolios I surveyed. This repo is the artifact that says <em>this person can ship into our stack on day one</em>.</p>
+
+    <h2>What's modeled</h2>
+    <ul class="tight">
+      <li><strong>5,000 customers</strong> in an 8-country split, with subscriptions, orders, and a 200-SKU product catalog.</li>
+      <li><strong>24 months of MRR snapshots</strong> across Starter / Growth / Pro tiers — ending at $1.3M.</li>
+      <li><strong>Six marts:</strong> dim_customer, dim_product, dim_date, fct_orders, fct_mrr_movement, fct_subscription_snapshot.</li>
+      <li><strong>One snapshot</strong> — SCD-2 history on the customer dimension. The pattern production teams use to audit changes after the fact.</li>
+      <li><strong>Two exposures</strong> — the Power BI dashboard and the Streamlit funnel app downstream. <code>dbt run --select +executive_dashboard</code> resolves the full upstream chain.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>The discipline that matters.</strong> Every column has a description. Every model has a purpose statement. Every key has a uniqueness test. A reusable macro converts cents to dollars in four different models — DRY SQL, not copy-paste. This is what production-grade looks like.
+    </div>
+
+    <h2>The lineage graph</h2>
+    <p>Auto-generated from <code>target/manifest.json</code> by a small Python script in <code>scripts/render_dag.py</code>. The repo commits the rendered PNG so a reviewer doesn't need to install dbt to see the shape of the project.</p>
+
+    <h2>Portability</h2>
+    <ul class="tight">
+      <li><strong>DuckDB locally</strong> — zero credentials, zero setup, runs in seconds.</li>
+      <li><strong>Snowflake / BigQuery / Redshift</strong> — change one profile, the SQL is portable.</li>
+      <li><strong>CI-ready</strong> — Makefile + idempotent scripts → drops cleanly into GitHub Actions.</li>
+    </ul>
+
+    <h2>The tech</h2>
+    <div class="badges">
+      <span class="badge">dbt-core 1.8</span>
+      <span class="badge">DuckDB</span>
+      <span class="badge">dbt-utils</span>
+      <span class="badge">dbt-expectations</span>
+      <span class="badge">Kimball</span>
+      <span class="badge">Jinja macros</span>
+      <span class="badge">Snapshots (SCD-2)</span>
+    </div>
+
+    <section class="cta">
+      <h2>Want the lineage?</h2>
+      <p>Repo includes the full dbt project, the rendered DAG, the lineage summary table, and the one-page business memo.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://github.com/Ucazin/dbt-analytics-warehouse">View on GitHub</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/luccamariz/">Connect on LinkedIn</a>
+      </div>
+    </section>
+
+    <div class="footer">
+      Built by <a class="link" href="https://github.com/Ucazin">Lucca Cesar</a> · Data Analyst · open to remote US/CA roles
+    </div>
+  </main>
+</body>
+</html>
