@@ -1,0 +1,60 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  DBT_PROFILES_DIR: ${{ github.workspace }}
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dbt-duckdb + helper deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install "dbt-duckdb>=1.7,<1.10" pandas numpy matplotlib networkx "ruff>=0.6,<1.0"
+
+      - name: Setup profiles.yml from template
+        run: cp profiles.yml.example profiles.yml
+
+      - name: Seed source tables into DuckDB
+        run: python scripts/seed_sources.py
+
+      - name: dbt deps
+        run: dbt deps
+
+      - name: dbt build (models + tests + seeds + snapshots)
+        run: dbt build --target dev
+
+      - name: dbt docs generate
+        run: dbt docs generate
+
+      - name: Render lineage DAG
+        run: python scripts/render_dag.py
+        continue-on-error: true
+
+      - name: Warehouse summary
+        run: python scripts/warehouse_summary.py
+        continue-on-error: true
+
+      - name: Upload dbt artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dbt-target-and-dag
+          path: |
+            target/
+            outputs/dag.png
+          retention-days: 14
