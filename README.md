@@ -1,5 +1,7 @@
 # dbt Modern Analytics Warehouse
 
+> 🌐 **Live walkthrough:** https://ucazin.github.io/dbt-analytics-warehouse/
+
 A production-shaped [dbt](https://docs.getdbt.com/) project that models a synthetic e-commerce + SaaS dataset into a clean Kimball warehouse — **sources → staging → intermediate → marts** — with tests, documentation, sources, snapshots, exposures, and a Jinja macro for recurring cents-to-dollars conversion.
 
 Built on **DuckDB** (zero-setup, runs in seconds locally) but every model is portable to Snowflake / BigQuery / Redshift with a profile change.
